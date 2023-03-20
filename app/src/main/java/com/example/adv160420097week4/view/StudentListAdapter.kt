@@ -24,7 +24,6 @@ class StudentListAdapter(val studentList:ArrayList<Student>): RecyclerView.Adapt
     override fun onBindViewHolder(holder: StudentViewHolder, position: Int) {
         val txtID = holder.view.findViewById<TextView>(R.id.txtID)
         val txtName = holder.view.findViewById<TextView>(R.id.txtName)
-        val imageView = holder.view.findViewById<ImageView>(R.id.imageView)
         txtID.text = studentList[position].id
         txtName.text = studentList[position].name
 

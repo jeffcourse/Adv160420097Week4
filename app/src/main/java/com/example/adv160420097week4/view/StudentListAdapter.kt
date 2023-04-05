@@ -5,11 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adv160420097week4.R
 import com.example.adv160420097week4.model.Student
+import com.example.adv160420097week4.util.loadImage
 import com.google.android.material.navigation.NavigationView
 
 class StudentListAdapter(val studentList:ArrayList<Student>): RecyclerView.Adapter<StudentListAdapter.StudentViewHolder>(){
@@ -29,9 +31,13 @@ class StudentListAdapter(val studentList:ArrayList<Student>): RecyclerView.Adapt
 
         val btnDetail = holder.view.findViewById<Button>(R.id.btnDetail)
         btnDetail.setOnClickListener{
-            val action = StudentListFragmentDirections.actionStudentDetail()
+            val action = StudentListFragmentDirections.actionStudentDetail(studentList[position].id.toString())
             Navigation.findNavController(it).navigate(action)
         }
+
+        var imageView = holder.view.findViewById<ImageView>(R.id.imageView)
+        var progress = holder.view.findViewById<ProgressBar>(R.id.progressBar)
+        imageView.loadImage(studentList[position].photoUrl, progress)
     }
 
     override fun getItemCount(): Int {

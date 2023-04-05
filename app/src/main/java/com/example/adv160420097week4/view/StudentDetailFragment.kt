@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.Observer
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adv160420097week4.R
 import com.example.adv160420097week4.model.Student
+import com.example.adv160420097week4.util.loadImage
 import com.example.adv160420097week4.viewmodel.DetailViewModel
 import com.example.adv160420097week4.viewmodel.ListViewModel
 import com.google.android.material.textfield.TextInputEditText
@@ -28,10 +30,13 @@ class StudentDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
 
-        detailModel = ViewModelProvider(this).get(DetailViewModel::class.java)
-        detailModel.fetch()
+        if(arguments != null){
+            val id = StudentDetailFragmentArgs.fromBundle(requireArguments()).id
+            detailModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+            detailModel.fetch(id)
 
-        observeDetailModel()
+            observeDetailModel()
+        }
     }
 
     fun observeDetailModel(){
@@ -39,12 +44,15 @@ class StudentDetailFragment : Fragment() {
         val txtName: TextInputEditText = requireView().findViewById(R.id.txtName)
         val txtBod: TextInputEditText = requireView().findViewById(R.id.txtBod)
         val txtPhone: TextInputEditText = requireView().findViewById(R.id.txtPhone)
+        val imageView: ImageView = requireView().findViewById(R.id.imageView2)
+        val progresBar: ProgressBar = requireView().findViewById(R.id.progressBar2)
 
         detailModel.studentLD.observe(viewLifecycleOwner, Observer{
             txtID.setText(it.id)
             txtName.setText(it.name)
             txtBod.setText(it.dob)
             txtPhone.setText(it.phone)
+            imageView.loadImage(it.photoUrl, progresBar)
         })
     }
 

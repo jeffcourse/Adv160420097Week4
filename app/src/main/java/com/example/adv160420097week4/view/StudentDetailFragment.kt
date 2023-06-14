@@ -1,10 +1,13 @@
 package com.example.adv160420097week4.view
 
+import android.icu.util.TimeUnit
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -18,6 +21,9 @@ import com.example.adv160420097week4.util.loadImage
 import com.example.adv160420097week4.viewmodel.DetailViewModel
 import com.example.adv160420097week4.viewmodel.ListViewModel
 import com.google.android.material.textfield.TextInputEditText
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 /**
  * A simple [Fragment] subclass.
@@ -46,6 +52,7 @@ class StudentDetailFragment : Fragment() {
         val txtPhone: TextInputEditText = requireView().findViewById(R.id.txtPhone)
         val imageView: ImageView = requireView().findViewById(R.id.imageView2)
         val progresBar: ProgressBar = requireView().findViewById(R.id.progressBar2)
+        val btnNotif: Button = requireView().findViewById(R.id.btnNotif)
 
         detailModel.studentLD.observe(viewLifecycleOwner, Observer{
             txtID.setText(it.id)
@@ -53,6 +60,19 @@ class StudentDetailFragment : Fragment() {
             txtBod.setText(it.dob)
             txtPhone.setText(it.phone)
             imageView.loadImage(it.photoUrl, progresBar)
+
+            var student = it
+            btnNotif.setOnClickListener {
+                Observable.timer(0, java.util.concurrent.TimeUnit.SECONDS)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        Log.d("Messages", "five seconds")
+                        MainActivity.showNotif(student.name.toString(),
+                            "A new notification created",
+                            R.drawable.circle)
+                    }
+            }
         })
     }
 

@@ -11,11 +11,14 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.adv160420097week4.R
+import com.example.adv160420097week4.databinding.FragmentStudentDetailBinding
 import com.example.adv160420097week4.model.Student
 import com.example.adv160420097week4.util.loadImage
 import com.example.adv160420097week4.viewmodel.DetailViewModel
@@ -30,9 +33,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers
  * Use the [StudentDetailFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class StudentDetailFragment : Fragment() {
+class StudentDetailFragment : Fragment(), ButtonNotifClickListener {
     private lateinit var detailModel: DetailViewModel
-
+    private lateinit var dataBinding: FragmentStudentDetailBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
 
@@ -46,16 +49,18 @@ class StudentDetailFragment : Fragment() {
     }
 
     fun observeDetailModel(){
-        val txtID: TextInputEditText = requireView().findViewById(R.id.txtID)
+        /*val txtID: TextInputEditText = requireView().findViewById(R.id.txtID)
         val txtName: TextInputEditText = requireView().findViewById(R.id.txtName)
         val txtBod: TextInputEditText = requireView().findViewById(R.id.txtBod)
         val txtPhone: TextInputEditText = requireView().findViewById(R.id.txtPhone)
         val imageView: ImageView = requireView().findViewById(R.id.imageView2)
         val progresBar: ProgressBar = requireView().findViewById(R.id.progressBar2)
-        val btnNotif: Button = requireView().findViewById(R.id.btnNotif)
+        val btnNotif: Button = requireView().findViewById(R.id.btnNotif)*/
 
         detailModel.studentLD.observe(viewLifecycleOwner, Observer{
-            txtID.setText(it.id)
+            dataBinding.student = it
+            dataBinding.listener = this
+            /*txtID.setText(it.id)
             txtName.setText(it.name)
             txtBod.setText(it.dob)
             txtPhone.setText(it.phone)
@@ -72,7 +77,7 @@ class StudentDetailFragment : Fragment() {
                             "A new notification created",
                             R.drawable.circle)
                     }
-            }
+            }*/
         })
     }
 
@@ -81,7 +86,22 @@ class StudentDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_student_detail, container, false)
+        dataBinding = DataBindingUtil.inflate<FragmentStudentDetailBinding>(inflater, R.layout.fragment_student_detail, container, false)
+        return dataBinding.root
+    }
+
+    override fun onButtonNotifClick(v: View, obj:Student) {
+        Observable.timer(0, java.util.concurrent.TimeUnit.SECONDS)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.d("Messages", "five seconds")
+                MainActivity.showNotif(
+                    obj.name.toString(),
+                    "A new notification created",
+                    R.drawable.circle
+                )
+            }
     }
 
     companion object {
